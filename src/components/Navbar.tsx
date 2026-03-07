@@ -17,15 +17,25 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollTo = (href: string) => {
+    const element = document.querySelector(href);
+
+    if (element) {
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+
     setIsOpen(false);
-    const el = document.querySelector(href);
-    el?.scrollIntoView({ behavior: "smooth" });
   };
 
   return (
@@ -41,7 +51,12 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
-          <button onClick={() => scrollTo("#home")} className="flex items-center gap-2">
+
+          {/* Logo */}
+          <button
+            onClick={() => scrollTo("#home")}
+            className="flex items-center gap-2"
+          >
             <span className="font-display text-xl sm:text-2xl font-bold text-foreground">
               Vaazhailla
             </span>
@@ -50,7 +65,7 @@ const Navbar = () => {
             </span>
           </button>
 
-          {/* Desktop nav */}
+          {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <button
@@ -61,6 +76,7 @@ const Navbar = () => {
                 {link.label}
               </button>
             ))}
+
             <a
               href="tel:9790018002"
               className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg text-sm font-medium hover:bg-leaf-light transition-colors"
@@ -70,26 +86,33 @@ const Navbar = () => {
             </a>
           </div>
 
-          {/* Mobile toggle */}
+          {/* Mobile Toggle */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="lg:hidden text-foreground p-2"
           >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            {isOpen ? (
+              <X className="w-6 h-6" />
+            ) : (
+              <Menu className="w-6 h-6" />
+            )}
           </button>
+
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
             className="lg:hidden bg-background/98 backdrop-blur-lg border-t border-border"
           >
             <div className="px-4 py-6 space-y-4">
+
               {navLinks.map((link) => (
                 <button
                   key={link.href}
@@ -99,6 +122,7 @@ const Navbar = () => {
                   {link.label}
                 </button>
               ))}
+
               <a
                 href="tel:9790018002"
                 className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-3 rounded-lg font-medium justify-center"
@@ -106,6 +130,7 @@ const Navbar = () => {
                 <Phone className="w-4 h-4" />
                 Call Us — 9790018002
               </a>
+
             </div>
           </motion.div>
         )}
